@@ -1,4 +1,4 @@
-module Util 
+module ParityGameLib.Util 
 
 let rec combineStringsWithSeperator (s: string) (l: list<string>) = 
     match l with 

@@ -1,4 +1,4 @@
-module ParityGameSolverOink
+module ParityGameLib.ParityGameSolverOink
 
 open System 
 open System.IO

@@ -1,4 +1,4 @@
-module ParityGame 
+module ParityGameLib.ParityGame 
 
 open System
 open System.IO

@@ -1,4 +1,4 @@
-module ParityGameSolverDirect
+module ParityGameLib.ParityGameSolverDirect
 
 open System.Collections.Generic
 
