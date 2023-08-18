@@ -89,11 +89,8 @@ let solveAndComputeStrategyWithOink intermediateFilesPath oinkPath (pg : ParityG
         | {ExitCode = 0; Stderr = ""} -> 
             File.ReadAllText(solPath)
             |> parseSolution 
-        | {ExitCode = exitCode; Stderr = stderr}  -> 
-            if exitCode <> 0 then 
-                raise <| ParityGameSolvingException $"Unexpected (non-zero) exit code %i{exitCode}"
-            else   
-                raise <| ParityGameSolvingException stderr
+        | {ExitCode = exitCode; Stderr = stderr; Stdout = stdout}  -> 
+            raise <| ParityGameSolvingException $"Error by oink | Exit code: %i{exitCode} | Stdout: \"%s{stdout}\" | Stderr: \"%s{stderr}\""
 
     let strategy = 
         sol
