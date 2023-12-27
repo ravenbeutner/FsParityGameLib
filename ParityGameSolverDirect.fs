@@ -30,16 +30,20 @@ type private Counter(init : int) =
 
 let solveDirect (pg : ParityGame<'T>) =
     // Map each states to all edges that have an edge to that state
+    let predDict = new Dictionary<_,_>()
+
+    for s in pg.Properties.Keys do 
+        predDict.Add (s, new HashSet<_>())
+
+    for s in pg.Properties.Keys do 
+        let sucs, _, _ = pg.Properties.[s]
+        for s' in sucs do 
+            predDict.[s'].Add s |> ignore
+
+
     let predMap = 
-        pg.Properties
-        |> Map.toSeq
-        |> Seq.map (fun (s, (sucs, _, _)) -> 
-            sucs 
-            |> Seq.map (fun y -> y, s)
-            )
-        |> Seq.concat
-        |> Seq.groupBy fst 
-        |> Seq.map (fun (x, l) -> x, Seq.map snd l |> set)
+        predDict
+        |> Seq.map (fun x -> x.Key, set x.Value)
         |> Map.ofSeq
 
     // We represent targets as indicator functions to avoids creation of to many sets
