@@ -1,22 +1,32 @@
+(*    
+    Copyright (C) 2022-2024 Raven Beutner
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*)
+
 module ParityGameLib.Util 
 
-let rec combineStringsWithSeperator (s: string) (l: list<string>) = 
-    match l with 
-    | [] -> ""
-    | [x] -> x
-    | x::y::xs -> 
-        x + s + combineStringsWithSeperator s (y::xs)
+module SubprocessUtil = 
 
-module SystemCallUtil = 
-
-    type SystemCallResult = 
+    type SubprocessResult = 
         {
             Stdout : string 
             Stderr : string 
             ExitCode : int
         }
 
-    let systemCall (cmd: string) (arg: string) = 
+    let executeSubprocess (cmd: string) (arg: string) = 
         let psi =
             System.Diagnostics.ProcessStartInfo(cmd, arg)
 
@@ -24,9 +34,11 @@ module SystemCallUtil =
         psi.RedirectStandardOutput <- true
         psi.RedirectStandardError <- true
         psi.CreateNoWindow <- true
+        
         let p = System.Diagnostics.Process.Start(psi)
         let output = System.Text.StringBuilder()
         let error = System.Text.StringBuilder()
+        
         p.OutputDataReceived.Add(fun args -> output.Append(args.Data) |> ignore)
         p.ErrorDataReceived.Add(fun args -> error.Append(args.Data) |> ignore)
         p.BeginErrorReadLine()
@@ -34,7 +46,7 @@ module SystemCallUtil =
         p.WaitForExit()
 
         {
-            SystemCallResult.Stdout = output.ToString();
+            SubprocessResult.Stdout = output.ToString();
             Stderr = error.ToString()
             ExitCode = p.ExitCode
         }
